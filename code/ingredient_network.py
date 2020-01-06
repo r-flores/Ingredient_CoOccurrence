@@ -211,7 +211,6 @@ while (line):
 
             # if the current item is an empty string
             elif (re.search(r"^(?![\s\S])", ingredients)):
-
                 #empty item no space simply move on
                 pass
 
@@ -220,10 +219,11 @@ while (line):
     else:
         print("No ingredients found on line " + str(countline))
 
+    # check if the array has atleast 2 entries
     if(len(ing_arr) > 1):
         make_food_subnetwork(ing_arr)
     else:
-        if(ing_arr[0]):
+        if ing_arr:
             print (ing_arr[0] + " Not added as it was the only ingredient listed for food " + barcode)
             single_ingre_foods += 1
 

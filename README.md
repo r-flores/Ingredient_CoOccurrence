@@ -397,10 +397,10 @@ ingredients$ingredients_text <-gsub('`','',ingredients$ingredients_text)
 ```
 
 ## 3. Create a simple co-occurrence network
-Next, we want to create a co-occurrence network, where nodes represent ingredients, and an edge drawn between the two nodes will represent a food where the two ingredients co-occur in the ingredients list. We will keep track of the number of times each co-occurrence edge occurs with a simple count. I have written two scripts (`ingredient_hash.pl` and `ingredient_network.pl`) located in the `workingDir/code/` directory that will create a hash of all ingredients and a count of their overall occurrence, as well as the co-occurrence network.
+Next, we want to create a co-occurrence network, where nodes represent ingredients, and an edge drawn between the two nodes will represent a food where the two ingredients co-occur in the ingredients list. We will keep track of the number of times each co-occurrence edge occurs with a simple count. I have written two scripts (`ingredient_hash.py` and `ingredient_network.py`) located in the `workingDir/code/` directory that will create a hash of all ingredients and a count of their overall occurrence, as well as the co-occurrence network.
 
 
-### 3.1 Write the ingredients to a .tab file and run the perl scripts
+### 3.1 Write the ingredients to a .tab file and run the python scripts
 
 
 ```python

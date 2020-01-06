@@ -1,9 +1,10 @@
 #Author: Ricky Flores
-#Created: 11/25/19
-#Last editied:
+#Original Work: https://github.com/kmcooper/Ingredient_CoOccurrence
+#Created: 1/6/20
+#Last editied: 1/6/20
 #input: ingredients.network.sif file from ingredient network R code
 #output: A node and edge list (.sif format) with edge wieghts of threshold or higher.
-#notes: this is a python adaptation to https://github.com/kmcooper/Ingredient_CoOccurrence
+#notes: this is a python adaptation to https://github.com/kmcooper/Ingredient_CoOccurrence/blob/master/code/parse_network_by_weight.pl
 
 import getopt
 import sys

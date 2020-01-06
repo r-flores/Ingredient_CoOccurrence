@@ -1,10 +1,10 @@
 #Author: Ricky Flores
+#Original Work: https://github.com/kmcooper/Ingredient_CoOccurrence
 #Created: 11/25/19
-#Last editied:
+#Last editied: 1/6/20
 #input: ingredients.tab
 #output: ingredient frequency from a hash
-#notes: this is a python adaptation to
-# https://github.com/kmcooper/Ingredient_CoOccurrence
+#notes: this is a python adaptation to https://github.com/kmcooper/Ingredient_CoOccurrence/blob/master/code/ingredient_hash.pl
 
 import getopt
 import sys

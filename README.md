@@ -407,9 +407,9 @@ Next, we want to create a co-occurrence network, where nodes represent ingredien
 write.table(ingredients, file = hash_infile,sep='\t',eol='\n',quote=FALSE,append=FALSE,row.names = FALSE)
 
 #Create an ingredient hash and an ingredient network with the scripts provided on this repository
-make_hash_command = paste0("perl ",codeDir,"ingredient_hash.pl ",dataDir,hash_infile," ",dataDir,hash_outfile)
+make_hash_command = paste0("python ",codeDir,"ingredient_hash.py ","-i ",dataDir,hash_infile," ","-o",dataDir,hash_outfile)
 system(make_hash_command)
-make_network_command = paste0("perl ",codeDir,"ingredient_network.pl ",dataDir,hash_infile," ",dataDir,network_rawfile)
+make_network_command = paste0("python ",codeDir,"ingredient_network.py ","-i ",dataDir,hash_infile," ","-o ",dataDir,network_rawfile)
 system(make_network_command)
 ```
 
@@ -705,7 +705,7 @@ The code below will parse the network file for only edge weights >= 2000, analyz
 # Parse the network so only edges with weights higher than 2000 are used
 # This step may take a few minutes
 #
-parse_network_command = paste0("perl ",codeDir,"parse_network_by_weight.pl ",dataDir,network_rawfile," ",dataDir,parsed_network_rawfile," ",edge_weight_threshold)
+parse_network_command = paste0("python ",codeDir,"parse_network_by_weight.py ","-i ",dataDir,network_rawfile," ","-o ",dataDir,parsed_network_rawfile," ","-t ",edge_weight_threshold)
 system(parse_network_command)
 
 #

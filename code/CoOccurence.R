@@ -514,7 +514,7 @@ write.csv(degree(subg),file = paste0("top_",top_x,"_node_degree.txt"))
 # Parse the network so only edges with weights higher than 2000 are used
 # This step may take a few minutes
 #
-parse_network_command = paste0("perl ",codeDir,"parse_network_by_weight.pl ",dataDir,network_rawfile," ",dataDir,parsed_network_rawfile," ",edge_weight_threshold)
+parse_network_command = paste0("python ",codeDir,"parse_network_by_weight.py ","-i ",dataDir,network_rawfile," ","-o ",dataDir,parsed_network_rawfile," ","-t ",edge_weight_threshold)
 system(parse_network_command)
 
 #

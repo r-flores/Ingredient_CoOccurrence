@@ -26,8 +26,9 @@ edge_weight_threshold = 2000
 
 setwd(paste0(workingDir,"data"))
 
-
-#Select one of the three
+#
+#Select one of the three datasets to use 
+#
 
 # 1 The below command is for the latest Open Foods Database Dataset
 ret = download.file("https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv","OFD_raw_data.csv")
@@ -53,7 +54,10 @@ ingredients <- Products[c(1,8)]
 colnames(ingredients) <- c("barcode", "ingredients_text")
 
 #################Data Pre-processing########################
-# Run the next three commands only if you are using the first Dataset (Open Foods)
+#
+#    Data Pre-processing step is only for Dataset 1
+#    if you are using Datasets 2 or 3 jump to Removal of special Characters
+#
 raw_ingredients = read.csv("raw_ingredients.txt",sep="\t",header = TRUE)
 names(raw_ingredients) <- c("barcode","ingredients_text")
 ingredients <- as.data.frame(raw_ingredients[-which(raw_ingredients$ingredients_text == ""), ])

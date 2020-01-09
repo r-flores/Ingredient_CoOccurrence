@@ -26,16 +26,24 @@ edge_weight_threshold = 2000
 
 setwd(paste0(workingDir,"data"))
 
-#The below command is for the latest Dataset
-#ret = download.file("https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv","raw_data.csv")
-system('wc -l raw_data.csv')
 
-system('cut -f 1,32,35,36,37 raw_data.csv | grep \'United States\' | uniq | wc -l')
+
+
+#The below command is for the latest Dataset
+#ret = download.file("https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv","new_open_raw_data.csv")
+
+#system('wc -l new_open_raw_data.csv')
+
+#system('cut -f 1,32,35,36,37 new_open_raw_data.csv | grep \'United States\' | uniq | wc -l')
+
 ##The below command returns 0 for the regex 
-#system('cut -f 1,32,35 raw_data.csv | grep \'^\\d*\tUnited States\t.*\' | cut -f 1,3 > raw_ingredients.txt ')
+system('cut -f 1,32,35 new_open_raw_data.csv | grep \'\\d*\tUnited States\t.*\' | cut -f 1,3 > raw_ingredients.txt ')
 #This command is put in for testing purposes
-system('cut -f 1,32,35 raw_data.csv | grep \'United States\' | cut -f 1,3 > raw_ingredients.txt ')
+#system('cut -f 1,32,35 raw_data.csv | grep \'United States\' | cut -f 1,3 > raw_ingredients.txt ')
 system('cut -f 1 raw_ingredients.txt | uniq | wc -l')
+
+
+
 
 #################Data Pre-processing########################
 raw_ingredients = read.csv("raw_ingredients.txt",sep="\t",header = TRUE)
@@ -280,11 +288,12 @@ ingredients$ingredients_text <-gsub('`','',ingredients$ingredients_text)
 write.table(ingredients, file = hash_infile,sep='\t',eol='\n',quote=FALSE,append=FALSE,row.names = FALSE)
 
 #Create an ingredient hash and an ingredient network with the scripts provided on this repository
-make_hash_command = paste0("python ",codeDir,"ingredient_hash.py ","-i ",dataDir,hash_infile," ","-o",dataDir,hash_outfile)
+make_hash_command = paste0("python ",codeDir,"ingredient_hash.py ","-i ",dataDir,hash_infile," ","-o ",dataDir,hash_outfile)
 system(make_hash_command)
 make_network_command = paste0("python ",codeDir,"ingredient_network.py ","-i ",dataDir,hash_infile," ","-o ",dataDir,network_rawfile)
 system(make_network_command)
 
+#install.packages("igraph")
 library(igraph)
 g_data <- read.csv(network_rawfile,sep = " ",header = F,as.is = T,col.names = c("v1","v2","weight"))
 g <- graph_from_data_frame(g_data)

@@ -105,13 +105,13 @@ while (line):
 
     #split the line on tab between barcode and ingridents
     tabs = currentLine.split("\t")
-    if (tabs[0]):
+    if (len(tabs) >= 1):
         barcode = tabs[0]
     else:
         #call out lines with no barcode
         print("no barcode found on line " + str(countline))
 
-    if (tabs[1]):
+    if (len(tabs) > 1):
         ingredients = tabs[1]
 
         # remove newline, replace "and", and "contains" with commas

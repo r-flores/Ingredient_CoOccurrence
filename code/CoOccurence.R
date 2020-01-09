@@ -27,28 +27,35 @@ edge_weight_threshold = 2000
 setwd(paste0(workingDir,"data"))
 
 
+#Select one of the three
 
-
-#The below command is for the latest Dataset
-#ret = download.file("https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv","new_open_raw_data.csv")
-
-#system('wc -l new_open_raw_data.csv')
-
-#system('cut -f 1,32,35,36,37 new_open_raw_data.csv | grep \'United States\' | uniq | wc -l')
-
-##The below command returns 0 for the regex 
-system('cut -f 1,32,35 new_open_raw_data.csv | grep \'\\d*\tUnited States\t.*\' | cut -f 1,3 > raw_ingredients.txt ')
-#This command is put in for testing purposes
-#system('cut -f 1,32,35 raw_data.csv | grep \'United States\' | cut -f 1,3 > raw_ingredients.txt ')
+# 1 The below command is for the latest Open Foods Database Dataset
+ret = download.file("https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv","OFD_raw_data.csv")
+system('wc -l OFD_raw_data.csv')
+system('cut -f 1,32,35,36,37 OFD_raw_data.csv | grep \'United States\' | uniq | wc -l')
+system('cut -f 1,32,35 OFD_raw_data.csv | grep \'\\d*\tUnited States\t.*\' | cut -f 1,3 > raw_ingredients.txt ')
 system('cut -f 1 raw_ingredients.txt | uniq | wc -l')
 
+# 2 The below command is for the USDA Branded Foods product Database (7/13/18)
+ret = download.file("https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip","UBFPD_raw_data.zip")
+system('unzip UBFPD_raw_data.zip')
+library(readr)
+Products <- read_csv("Products.csv")
+ingredients <- Products[c(1,8)]
+colnames(ingredients) <- c("barcode", "ingredients_text")
 
-
+# 3 This command will download FoodData Central Dataset USDA new data source (December 2019)
+ret = download.file("https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip","FCD_raw_data.zip")
+system('unzip FCD_raw_data.zip')
+library(readr)
+Products <- read_csv("Products.csv")
+ingredients <- Products[c(1,8)]
+colnames(ingredients) <- c("barcode", "ingredients_text")
 
 #################Data Pre-processing########################
+# Run the next three commands only if you are using the first Dataset (Open Foods)
 raw_ingredients = read.csv("raw_ingredients.txt",sep="\t",header = TRUE)
 names(raw_ingredients) <- c("barcode","ingredients_text")
-
 ingredients <- as.data.frame(raw_ingredients[-which(raw_ingredients$ingredients_text == ""), ])
 # You can now remove the raw_ingredients variable 
 # if you are feeling confident in the reproducibility of your project
@@ -56,6 +63,7 @@ ingredients <- as.data.frame(raw_ingredients[-which(raw_ingredients$ingredients_
 #remove(raw_ingredients)
 
 #####Removal of special characters (Extension of Data Pre-processing)##############
+# If you are using the second or third dataset start here
 ingredients$ingredients_text <- tolower(ingredients$ingredients_text)
 ingredients$ingredients_text <-gsub('\\d+[.,]*\\d*\\s{0,1}%','',ingredients$ingredients_text)
 ingredients$ingredients_text <-gsub('organic ','',ingredients$ingredients_text, ignore.case = TRUE)
@@ -296,6 +304,10 @@ system(make_network_command)
 #install.packages("igraph")
 library(igraph)
 g_data <- read.csv(network_rawfile,sep = " ",header = F,as.is = T,col.names = c("v1","v2","weight"))
+
+#make sure weight is treated as numeric
+g_data$weight <- as.numeric(as.character(g_data$weight))
+
 g <- graph_from_data_frame(g_data)
 
 ##############Basic Analysis with R###############
@@ -519,6 +531,9 @@ subg <- as.undirected(subg, mode= "collapse")
 write.graph(subg,file = paste0("top_",top_x,"_network.txt"),format="ncol")
 write.csv(degree(subg),file = paste0("top_",top_x,"_node_degree.txt"))
 
+#simple plot of the top 20 nodes
+plot(subg)
+
 # 
 # Parse the network so only edges with weights higher than 2000 are used
 # This step may take a few minutes
@@ -577,11 +592,15 @@ deg.dist <- degree.distribution(g,cumulative = TRUE,mode="all")
 plot(deg.dist, main = "Degree Distribution, Parsed Co-Occurence Network",
      col="darkblue",pch=10,cex=0.75,xlab="Degree", ylab="Cumulative Frequency",xlim=c(0,1000))
 
+
+
 cliq<- max_cliques(g)
 
 # Examining the cliq variable allows us to see that the maximal clique size found is 16, 
 # which is used below to investigate their contents
-cliq2<-cliques(g,min=16,max=16)
+
+
+cliq2<-cliques(g,min=16,max=16)# This will cause a crash if used on dataset 2
 length(cliq2)
 cliq2[1]
 cliq2[2]

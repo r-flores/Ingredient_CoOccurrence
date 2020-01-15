@@ -600,11 +600,16 @@ plot(deg.dist, main = "Degree Distribution, Parsed Co-Occurence Network",
 
 cliq<- max_cliques(g)
 
+#Find the largest clique number
+clique_num(g)
+
 # Examining the cliq variable allows us to see that the maximal clique size found is 16, 
 # which is used below to investigate their contents
 
+# Select the clique command corresponding to that dataset you are using 
+cliq2<-cliques(g,min=16,max=16)# This is for Dataset 1 ONLY
+cliq2<-cliques(g,min=38,max=38)# This is for Datasets 2 and 3 ONLY
 
-cliq2<-cliques(g,min=16,max=16)# This will cause a crash if used on dataset 2
 length(cliq2)
 cliq2[1]
 cliq2[2]

@@ -1,15 +1,16 @@
 ######Data Generation#####
+#
 ## Set variables
 #
 
 #Preferred working directory
-workingDir = "~/Documents/Workspace/Co-OccurenceReplicant/"
+workingDir = "~/Ingredient_network/"
 
 #Where data and code are stored
-dataDir = "~/Documents/Workspace/Co-OccurenceReplicant/data/"
-codeDir = "~/Documents/Workspace/Co-OccurenceReplicant/code/"
+dataDir = "~/Ingredient_network/data/"
+codeDir = "~/Ingredient_network/code/"
 
-#Names you would like to give these files, including
+# Names you would like to give these files, including
 # The ingredients file output from the R script (after pre-processing)
 hash_infile = "ingredients.tab"
 
@@ -26,38 +27,16 @@ edge_weight_threshold = 2000
 
 setwd(paste0(workingDir,"data"))
 
-#
-#Select one of the three datasets to use 
-#
 
-# 1 The below command is for the latest Open Foods Database Dataset
+##### Select one of the three datasets to use #####
+#
+## 1 The below commands are for the latest Open Foods Database Dataset
+#
 ret = download.file("https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv","OFD_raw_data.csv")
 system('wc -l OFD_raw_data.csv')
 system('cut -f 1,32,35,36,37 OFD_raw_data.csv | grep \'United States\' | uniq | wc -l')
 system('cut -f 1,32,35 OFD_raw_data.csv | grep \'\\d*\tUnited States\t.*\' | cut -f 1,3 > raw_ingredients.txt ')
 system('cut -f 1 raw_ingredients.txt | uniq | wc -l')
-
-# 2 The below command is for the USDA Branded Foods product Database (7/13/18)
-ret = download.file("https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip","UBFPD_raw_data.zip")
-system('unzip UBFPD_raw_data.zip')
-library(readr)
-Products <- read_csv("Products.csv")
-ingredients <- Products[c(1,8)]
-colnames(ingredients) <- c("barcode", "ingredients_text")
-
-# 3 This command will download FoodData Central Dataset USDA new data source (December 2019)
-ret = download.file("https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip","FCD_raw_data.zip")
-system('unzip FCD_raw_data.zip')
-library(readr)
-Products <- read_csv("Products.csv")
-ingredients <- Products[c(1,8)]
-colnames(ingredients) <- c("barcode", "ingredients_text")
-
-#################Data Pre-processing########################
-#
-#    Data Pre-processing step is only for Dataset 1
-#    if you are using Datasets 2 or 3 jump to Removal of special Characters
-#
 raw_ingredients = read.csv("raw_ingredients.txt",sep="\t",header = TRUE)
 names(raw_ingredients) <- c("barcode","ingredients_text")
 ingredients <- as.data.frame(raw_ingredients[-which(raw_ingredients$ingredients_text == ""), ])
@@ -65,6 +44,27 @@ ingredients <- as.data.frame(raw_ingredients[-which(raw_ingredients$ingredients_
 # if you are feeling confident in the reproducibility of your project
 # To do this, uncomment the command below
 #remove(raw_ingredients)
+
+#
+## 2 The below commands are for the USDA Branded Foods product Database (7/13/18)
+#
+ret = download.file("https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip","UBFPD_raw_data.zip")
+system('unzip UBFPD_raw_data.zip')
+library(readr)
+Products <- read_csv("Products.csv")
+ingredients <- Products[c(1,8)]
+colnames(ingredients) <- c("barcode", "ingredients_text")
+
+#
+## 3 The below commands will download FoodData Central Dataset USDA new data source (December 2019)
+#
+ret = download.file("https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip","FCD_raw_data.zip")
+system('unzip FCD_raw_data.zip')
+library(readr)
+Products <- read_csv("Products.csv")
+ingredients <- Products[c(1,8)]
+colnames(ingredients) <- c("barcode", "ingredients_text")
+
 
 #####Removal of special characters (Extension of Data Pre-processing)##############
 # If you are using the second or third dataset start here
@@ -599,21 +599,16 @@ plot(deg.dist, main = "Degree Distribution, Parsed Co-Occurence Network",
 
 
 cliq<- max_cliques(g)
-
-#Find the largest clique number
-clique_num(g)
+high_clique<- clique_num(g)
 
 # Examining the cliq variable allows us to see that the maximal clique size found is 16, 
 # which is used below to investigate their contents
 
-# Select the clique command corresponding to that dataset you are using 
-cliq2<-cliques(g,min=16,max=16)# This is for Dataset 1 ONLY
-cliq2<-cliques(g,min=38,max=38)# This is for Datasets 2 and 3 ONLY
 
+cliq2<-cliques(g,min=high_clique,max=high_clique)
 length(cliq2)
-cliq2[1]
-cliq2[2]
-cliq2[3]
-cliq2[4]
-cliq2[5]
-cliq2[6]
+count<- 1
+for(i in cliq2){
+  cat("cliq2:", count, "\n")
+  print(i)
+  count<- count + 1}

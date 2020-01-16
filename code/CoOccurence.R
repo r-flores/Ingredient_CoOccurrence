@@ -4,11 +4,11 @@
 #
 
 #Preferred working directory
-workingDir = "~/Ingredient_network/"
+workingDir = "~/ingredient_network/"
 
 #Where data and code are stored
-dataDir = "~/Ingredient_network/data/"
-codeDir = "~/Ingredient_network/code/"
+dataDir = "~/ingredient_network/data/"
+codeDir = "~/ingredient_network/code/"
 
 # Names you would like to give these files, including
 # The ingredients file output from the R script (after pre-processing)

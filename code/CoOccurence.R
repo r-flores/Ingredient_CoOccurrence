@@ -46,23 +46,14 @@ ingredients <- as.data.frame(raw_ingredients[-which(raw_ingredients$ingredients_
 #remove(raw_ingredients)
 
 #
-## 2 The below commands are for the USDA Branded Foods product Database (7/13/18)
+## 2 The below commands will download FoodData Central Dataset USDA new data source (December 2019)
 #
-ret = download.file("https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip","UBFPD_raw_data.zip")
-system('unzip UBFPD_raw_data.zip')
-library(readr)
-Products <- read_csv("Products.csv")
-ingredients <- Products[c(1,8)]
-colnames(ingredients) <- c("barcode", "ingredients_text")
-
-#
-## 3 The below commands will download FoodData Central Dataset USDA new data source (December 2019)
-#
-ret = download.file("https://www.ars.usda.gov/ARSUserFiles/80400525/Data/BFPDB/BFPD_csv_07132018.zip","FCD_raw_data.zip")
+ret = download.file("https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_csv_2019-12-17.zip","FCD_raw_data.zip")
 system('unzip FCD_raw_data.zip')
 library(readr)
-Products <- read_csv("Products.csv")
-ingredients <- Products[c(1,8)]
+Products <- read_csv("branded_food.csv")
+system('wc -l branded_food.csv')
+ingredients <- Products[c(1,4)]
 colnames(ingredients) <- c("barcode", "ingredients_text")
 
 
@@ -345,13 +336,13 @@ is.connected(g)
 
 # Centrality Measures
 # Assortativity
-ass <- assortativity_degree(g, directed=F)
+#ass <- assortativity_degree(g, directed=F)
 
 # Closeness
-close <- closeness(g, mode="all", weights=NA)
+#close <- closeness(g, mode="all", weights=NA)
 
 # Eigenvector centrality
-eigen <- eigen_centrality(g, directed=FALSE, weights=NA)
+#eigen <- eigen_centrality(g, directed=FALSE, weights=NA)
 
 #
 #  Note: The commands below take time since the network is large, 
@@ -408,7 +399,7 @@ random.ab.degdist = degree.distribution(random.ab.graph,cumulative=T,mode='all')
 ks.test(deg.dist,random.er.degdist)
 ks.test(deg.dist,random.ab.degdist)
 
-#
+#--------------------------------------------------
 #Get the top X nodes by degree and their edge density
 #
 
@@ -464,7 +455,7 @@ while(stop == FALSE){
 }
 
 #Round the density list for better plotting
-round(den_list,digits=2)
+round(den_list, digits=2)
 
 #Plot the sampled density of the top k nodes
 #This will result in the plot shown in Figure 1B
@@ -483,7 +474,7 @@ k_list[9]
 den_list[10]
 k_list[10]
 
-top_x = 400
+top_x = 5000 #<-for edge density
 hub_list = list()
 for(i in c(1:top_x)){
   hub_list = c(hub_list,deg[i,]$vertex_id)
@@ -498,32 +489,14 @@ length(V(subg))
 #How many edges in the induced subgraph by top 400 nodes? Whats the graph density?
 graph.density(subg)
 
-#
-#How many edges are represented in the top 5000 nodes in the graph?
-#
-top_x = 5000
-hub_list = list()
-for(i in c(1:top_x)){
-  hub_list = c(hub_list,deg[i,]$vertex_id)
-}
-#Get the induced subgraph of the top i hub nodes in the network
-subg <- induced_subgraph(g,vids=c(hub_list))
-subg <- as.undirected(subg, mode= "collapse")
-
-#This number should be 400
-length(V(subg))
-
-#How many edges in the induced subgraph by top 5000 nodes? Whats the graph density?
-graph.density(subg)
-
-#
-#Get the induced subgraph for the top 500 nodes by degree and their edge density
+#-------------------------------------------------------------------------------
+#Get the induced subgraph for the (top_x) nodes by degree and their edge density
 #
 deg <- as.data.frame(degree(g, mode="all"))
 names(deg)= c("degree")
 deg$vertex_id = V(g)
 deg <- deg[order(deg$degree,decreasing = T),]
-top_x = 20
+top_x = 200 #<-Change for Network Nodes
 hub_list = list()
 for(i in c(1:top_x)){
   hub_list = c(hub_list,deg[i,]$vertex_id)
@@ -538,7 +511,7 @@ write.csv(degree(subg),file = paste0("top_",top_x,"_node_degree.txt"))
 #simple plot of the top 20 nodes
 plot(subg)
 
-# 
+# ---------------------------------------------------------------------
 # Parse the network so only edges with weights higher than 2000 are used
 # This step may take a few minutes
 #
@@ -584,10 +557,11 @@ cc <- transitivity(g,type="global")
 #diam <- diameter(g,directed=FALSE,weights=NA)
 
 #assortativity
-ass <- assortativity_degree(g, directed=F)
-close <- closeness(g, mode="all", weights=NA)
-eigen <- eigen_centrality(g, directed=FALSE, weights=NA)
-bet <- betweenness(g, directed=FALSE, weights=NA)
+#ass <- assortativity_degree(g, directed=F)
+#close <- closeness(g, mode="all", weights=NA)
+#eigen <- eigen_centrality(g, directed=FALSE, weights=NA)
+#bet <- betweenness(g, directed=FALSE, weights=NA)
+
 
 #
 # Examine and plot the degree distribution

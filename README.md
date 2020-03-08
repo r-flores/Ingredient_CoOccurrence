@@ -4,7 +4,7 @@ Title: "Open Food Database: Ingredient Co-Occurence Network"
 Author: "Kate Cooper"  
 Edited: "Ricky Flores"  
 Creation date: "Feb-28-2019"  
-Last updated: "Jun-27-2019"  
+Last updated: "Mar-08-2020"  
 Output: html_document   
 
 

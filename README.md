@@ -13,7 +13,7 @@ The following presents a detailed and reproducible* methodology of how the ingre
 *=hopefully
 
 ## 1. Data Download 
-The data used for this analysis was downloaded from https://world.openfoodfacts.org/data on 03-21-2019 at 9:57am as a CSV file. The file folder hierarchy I have set up assumes you are in your home directory and have created a folder called `ingredient_network` with subfolders `ingredient_network/data` and `ingredient_network/code`. All code needed for the `ingredient_network/code` folder is available on the Github.
+The data used for this analysis was downloaded from https://world.openfoodfacts.org/data on 02-15-2020 as a CSV file and https://fdc.nal.usda.gov/download-datasets.html on 02-15-2020 as a csv. The file folder hierarchy I have set up assumes you are in your home directory and have created a folder called `ingredient_network` with subfolders `ingredient_network/data` and `ingredient_network/code`. All code needed for the `ingredient_network/code` folder is available on the Github.
 
 **Environment setup:**  
 1. Set your working directory as the variable `workingDir`  

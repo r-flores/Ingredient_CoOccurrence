@@ -58,70 +58,47 @@ edge_weight_threshold = 2000
 
 ```
 
-At time of download (March 2019), the CSV file downloaded was 2.21GB, so plan accordingly if you need space. The file itself contained 798,919 lines by wordcount and is tab-delimited.
+Select one of the following Data sources.
 
-
+SOURCE 1
 ```python
 #
 ## Change to the data directory and download the file from the Open Food Database
 #
 setwd(paste0(workingDir,"data"))
-ret = download.file("https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv","raw_data.csv")
-system('wc -l raw_data.csv')
-
-```
-
-The dataset itself contains a lot of information; at this exploratory stage we only would like to investigate ingredients per product.   
-We also have to check the following:
-* Are there dupliate products in the data?
-* Are all ingredients named in the same way?
-
-First, we will check if there are duplicates by barcode, the first column in the dataset. We will search only for foods sold in the United States (column 32). We also want to include the ingredients (columnt 35), and any allergens that may be noted (columns 36 and 37).
-
-
-```python
-system('cut -f 1,32,35,36,37 raw_data.csv | grep \'United States\' | uniq | wc -l')
-```
-
-We want to look at product by barcode as a unique ID for the product and we will make our ingredient network by comparing ingredients from the "ingredients" text in column 35, so in the next steps we extract columns 1 and 35 only from the data, and remove duplicates. This cuts our file, now named `raw_ingredients.txt` down to a much more manageable size of 38.5MB.
-
-
-```python
-system('cut -f 1,32,35 raw_data.csv | grep \'^\\d*\tUnited States\t.*\' | cut -f 1,3 > raw_ingredients.txt ')
-```
-
-We note that there are 174,785 rows (unique barcodes for foods in the United States) listed in our raw_ingredients file. It is assumed that entries into the Open Food Database are not reviewed for correctness [citation needed], but the 2004 Food Allergen Labeling Consumer Protection Act (FALCPA), which took effect in January 2006, requires all food labels in the United States to identify if a product contains one of the eight major allergens. ([Source](https://www.fda.gov/food/guidanceregulation/guidancedocumentsregulatoryinformation/allergens/ucm106890.htm))
-
-
-```python
+ret = download.file("https://static.openfoodfacts.org/data/en.openfoodfacts.org.products.csv","OFD_raw_data.csv")
+system('wc -l OFD_raw_data.csv')
+system('cut -f 1,32,35,36,37 OFD_raw_data.csv | grep \'United States\' | uniq | wc -l')
+system('cut -f 1,32,35 OFD_raw_data.csv | grep \'\\d*\tUnited States\t.*\' | cut -f 1,3 > raw_ingredients.txt ')
 system('cut -f 1 raw_ingredients.txt | uniq | wc -l')
-```
-
-## 2. Data Pre-processing
-Next, we want to remove any barcodes that do not have ingredients associated with them.   
-To do this, lets read the file into R and begin manipulating it in memory.
-
-
-```python
 raw_ingredients = read.csv("raw_ingredients.txt",sep="\t",header = TRUE)
 names(raw_ingredients) <- c("barcode","ingredients_text")
-```
-
-This should result in a dataframe called `raw_ingredients` that contains 499,879 observations of 2 variables. Next, we remove duplicates by removing rows for which `ingredients_text` is empty.
-
-
-```python
 ingredients <- as.data.frame(raw_ingredients[-which(raw_ingredients$ingredients_text == ""), ])
-
 # You can now remove the raw_ingredients variable 
 # if you are feeling confident in the reproducibility of your project
 # To do this, uncomment the command below
-
 #remove(raw_ingredients)
 
 ```
 
-Once this is complete, we can begin to investigate and compare ingredients. Taking a brief look at the data, the first challenge to overcome is the case of the text; evaluating "Salt" and "salt" as equal ingredients will be easier if they are written in the same case. So next we change the ingredients list to all lowercase.
+SOURCE 2
+```python
+#
+## Change to the data directory and download the file from the Food Central DB
+#
+ret = download.file("https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_branded_food_csv_2019-12-17.zip","FCD_raw_data.zip")
+system('unzip FCD_raw_data.zip')
+library(readr)
+Products <- read_csv("branded_food.csv")
+system('wc -l branded_food.csv')
+ingredients <- Products[c(1,4)]
+colnames(ingredients) <- c("barcode", "ingredients_text")
+
+```
+
+## 2. Data Pre-processing
+
+Once the download is complete and we've selected our colnums, we can begin to investigate and compare ingredients. Taking a brief look at the data, the first challenge to overcome is the case of the text; evaluating "Salt" and "salt" as equal ingredients will be easier if they are written in the same case. So next we change the ingredients list to all lowercase.
 
 
 ```python
@@ -767,15 +744,17 @@ We also used the code below to identify maximal cliques in the parsed network (T
 
 ```python
 cliq<- max_cliques(g)
+high_clique<- clique_num(g)
 
 # Examining the cliq variable allows us to see that the maximal clique size found is 16, 
 # which is used below to investigate their contents
-cliq2<-cliques(g,min=16,max=16)
+
+
+cliq2<-cliques(g,min=high_clique,max=high_clique)
 length(cliq2)
-cliq2[1]
-cliq2[2]
-cliq2[3]
-cliq2[4]
-cliq2[5]
-cliq2[6]
+count<- 1
+for(i in cliq2){
+  cat("cliq2:", count, "\n")
+  print(i)
+  count<- count + 1}
 ```
